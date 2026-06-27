@@ -37,24 +37,37 @@ jobs:
           python -m pip install --upgrade pip
           pip install buildozer cython
 
-      - name: Download and setup Android SDK cmdline-tools
+      - name: Download Android SDK cmdline-tools
         run: |
           SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
-          mkdir -p "$SDK_DIR/cmdline-tools/latest"
-          cd "$SDK_DIR/cmdline-tools/latest"
-          curl -sL https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -o cmdline-tools.zip
+          mkdir -p "$SDK_DIR/cmdline-tools"
+          cd "$SDK_DIR/cmdline-tools"
+          curl -sL https://dl.google.com/android/repository/commandlinetools-linux-11781192_latest.zip -o cmdline-tools.zip
           unzip -q cmdline-tools.zip
-          mv cmdline-tools temp
-          mv temp/bin .
-          mv temp/lib .
-          mv temp/source.properties .
-          rm -rf temp cmdline-tools.zip
+          mv cmdline-tools latest
+          rm cmdline-tools.zip
 
-      - name: Accept Android SDK licenses
+      - name: Download Android SDK platform-tools
         run: |
           SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
-          mkdir -p "$SDK_DIR/licenses"
-          echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$SDK_DIR/licenses/android-sdk-license"
+          "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" "platform-tools" --sdk_root="$SDK_DIR" --licenses 2>&1 || true
+
+      - name: Download Android SDK platform (API 33)
+        run: |
+          SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
+          "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" "platforms;android-33" --sdk_root="$SDK_DIR" 2>&1 || true
+
+      - name: Download Android SDK build-tools
+        run: |
+          SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
+          "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" "build-tools;33.0.0" --sdk_root="$SDK_DIR" 2>&1 || true
+
+      - name: Download Android NDK
+        run: |
+          NDK_DIR="$HOME/.buildozer/android/platform"
+          curl -sL https://dl.google.com/android/repository/android-ndk-r23b-linux.zip -o ndk.zip
+          unzip -q ndk.zip -d "$NDK_DIR"
+          rm ndk.zip
 
       - name: Build APK (debug)
         working-directory: ${{ github.workspace }}
