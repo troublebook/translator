@@ -37,30 +37,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install buildozer cython
 
-      - name: Download Android SDK cmdline-tools
+      - name: Download and setup complete Android SDK
         run: |
           SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
           mkdir -p "$SDK_DIR/cmdline-tools"
           cd "$SDK_DIR/cmdline-tools"
-          curl -sL https://dl.google.com/android/repository/commandlinetools-linux-12266719_latest.zip -o cmdline-tools.zip
-          unzip -q cmdline-tools.zip
+          curl -sL https://dl.google.com/android/repository/commandlinetools-linux-11781192_latest.zip -o ct.zip
+          unzip -q ct.zip
           mv cmdline-tools latest
-          rm cmdline-tools.zip
+          rm ct.zip
 
-      - name: Download Android SDK platform-tools
-        run: |
-          SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
-          "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" "platform-tools" --sdk_root="$SDK_DIR" --licenses 2>&1 || true
-
-      - name: Download Android SDK platform (API 33)
-        run: |
-          SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
-          "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" "platforms;android-33" --sdk_root="$SDK_DIR" 2>&1 || true
-
-      - name: Download Android SDK build-tools
-        run: |
-          SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
-          "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" "build-tools;33.0.0" --sdk_root="$SDK_DIR" 2>&1 || true
+          # Accept license and install everything in one call
+          yes | "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" --licenses --sdk_root="$SDK_DIR"
+          "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$SDK_DIR" platform-tools build-tools;33.0.3 platforms;android-33
 
       - name: Download Android NDK
         run: |
