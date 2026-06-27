@@ -42,7 +42,7 @@ jobs:
           SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
           mkdir -p "$SDK_DIR/cmdline-tools"
           cd "$SDK_DIR/cmdline-tools"
-          curl -sL https://dl.google.com/android/repository/commandlinetools-linux-11781192_latest.zip -o cmdline-tools.zip
+          curl -sL https://dl.google.com/android/repository/commandlinetools-linux-12266719_latest.zip -o cmdline-tools.zip
           unzip -q cmdline-tools.zip
           mv cmdline-tools latest
           rm cmdline-tools.zip
