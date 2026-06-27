@@ -1,0 +1,171 @@
+#:kivy 1.11.1
+#:import dp kivy.metrics.dp
+#:import MATERIAL_BLUE 1976D2
+#:import MATERIAL_LIGHT_BLUE E1F5FE
+#:import MATERIAL_GRAY 9E9E9E
+#:import MATERIAL_DARK 212121
+#:import MATERIAL_WHITE FFFFFF
+
+<MainScreen>:
+    orientation: "vertical"
+    padding: dp(16)
+    spacing: dp(12)
+    canvas.before:
+        Color:
+            rgba: 0.95, 0.95, 0.97, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    # --- Header ---
+    Label:
+        text: "Translator / 翻译"
+        font_size: dp(24)
+        bold: True
+        color: 0.1, 0.1, 0.1, 1
+        size_hint_y: None
+        height: dp(50)
+        halign: "center"
+
+    # --- Source language row ---
+    BoxLayout:
+        size_hint_y: None
+        height: dp(44)
+        spacing: dp(8)
+
+        Label:
+            text: "FROM"
+            font_size: dp(12)
+            color: 0.4, 0.4, 0.4, 1
+            bold: True
+
+        Spinner:
+            id: source_spinner
+            values: app.language_names
+            text: "English"
+            size_hint_x: None
+            width: dp(160)
+            on_text: root.on_source_language_changed(self, self.text)
+            background_color: 1, 1, 1, 1
+            background_normal: ""
+            color: 0.13, 0.13, 0.13, 1
+            font_size: dp(13)
+
+    # --- Input area ---
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_y: None
+        height: dp(120)
+
+        TextInput:
+            id: input_text
+            hint_text: "Enter text to translate..."
+            multiline: True
+            write_tab: False
+            cursor_blink: False
+            font_size: dp(15)
+            padding: [dp(10), dp(8)]
+            background_color: 1, 1, 1, 1
+            background_normal: ""
+            color: 0.13, 0.13, 0.13, 1
+            foreground_color: 0.13, 0.13, 0.13, 1
+            # Draw rounded rect border
+            canvas.before:
+                Color:
+                    rgba: 0.85, 0.85, 0.87, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(8)]
+
+    # --- Swap button ---
+    Button:
+        text: "⇄  交换语言  Swap"
+        size_hint_y: None
+        height: dp(38)
+        font_size: dp(13)
+        background_color: MATERIAL_LIGHT_BLUE.split() + [0.5]
+        background_normal: ""
+        color: 0.13, 0.13, 0.13, 1
+        on_press: root.on_swap_languages()
+
+    # --- Target language row ---
+    BoxLayout:
+        size_hint_y: None
+        height: dp(44)
+        spacing: dp(8)
+
+        Label:
+            text: "TO"
+            font_size: dp(12)
+            color: 0.4, 0.4, 0.4, 1
+            bold: True
+
+        Spinner:
+            id: target_spinner
+            values: app.language_names
+            text: "Chinese (Simplified)"
+            size_hint_x: None
+            width: dp(160)
+            on_text: root.on_target_language_changed(self, self.text)
+            background_color: 1, 1, 1, 1
+            background_normal: ""
+            color: 0.13, 0.13, 0.13, 1
+            font_size: dp(13)
+
+    # --- Translate button ---
+    Button:
+        id: translate_btn
+        text: "翻译 / Translate"
+        size_hint_y: None
+        height: dp(50)
+        font_size: dp(16)
+        bold: True
+        background_color: MATERIAL_BLUE.split() + [1]
+        background_normal: ""
+        color: 1, 1, 1, 1
+        on_press: root.on_translate()
+
+    # --- Output area ---
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_y: None
+        height: dp(100)
+
+        Label:
+            id: output_label
+            text: "Translation will appear here..."
+            text_size: self.size
+            halign: "left"
+            valign: "top"
+            multiline: False
+            color: 0.3, 0.3, 0.3, 1
+            font_size: dp(14)
+            padding: [dp(10), dp(8)]
+            canvas.before:
+                Color:
+                    rgba: 0.85, 0.85, 0.87, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(8)]
+
+        # Copy button row
+        BoxLayout:
+            size_hint_y: None
+            height: dp(32)
+            spacing: dp(8)
+            pos_hint: {"x": 0}
+
+            Label:
+                size_hint_x: 1
+
+            Button:
+                text: "Copy / 复制"
+                size_hint_x: None
+                width: dp(110)
+                font_size: dp(12)
+                background_color: 0.95, 0.95, 0.97, 1
+                background_normal: ""
+                color: MATERIAL_BLUE.split() + [1]
+                on_press: root.on_copy_output()
