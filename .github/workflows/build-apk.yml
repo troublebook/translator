@@ -37,11 +37,24 @@ jobs:
           python -m pip install --upgrade pip
           pip install buildozer cython
 
+      - name: Download and setup Android SDK cmdline-tools
+        run: |
+          SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
+          mkdir -p "$SDK_DIR/cmdline-tools/latest"
+          cd "$SDK_DIR/cmdline-tools/latest"
+          curl -sL https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -o cmdline-tools.zip
+          unzip -q cmdline-tools.zip
+          mv cmdline-tools temp
+          mv temp/bin .
+          mv temp/lib .
+          mv temp/source.properties .
+          rm -rf temp cmdline-tools.zip
+
       - name: Accept Android SDK licenses
         run: |
-          mkdir -p $HOME/.buildozer/android/platform/android-sdk/licenses
-          echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-          echo "84831b9e0e21c932af7e946501cf5d43bdc38084" >> $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
+          mkdir -p "$SDK_DIR/licenses"
+          echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$SDK_DIR/licenses/android-sdk-license"
 
       - name: Build APK (debug)
         working-directory: ${{ github.workspace }}
