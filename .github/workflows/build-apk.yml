@@ -50,11 +50,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install buildozer cython
 
-      - name: Install buildozer in the project dir
-        working-directory: ${{ github.workspace }}
-        run: |
-          pip install .
-
       - name: Build APK (debug)
         working-directory: ${{ github.workspace }}
         run: |
@@ -66,3 +61,10 @@ jobs:
           name: translator-debug-apk
           path: ${{ github.workspace }}/bin/*.apk
           retention-days: 30
+
+      - name: Debug APK location
+        if: failure()
+        run: |
+          echo "Looking for APK files..."
+          find ${{ github.workspace }} -name "*.apk" 2>/dev/null
+          ls -la ${{ github.workspace }}/bin/ 2>/dev/null || echo "bin/ not found"
