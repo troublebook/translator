@@ -54,6 +54,7 @@ jobs:
         run: |
           mkdir -p $HOME/.android
           echo "84831b9e0e21c932af7e946501cf5d43bdc38084" > $HOME/.android/repositories.cfg
+          yes | sdkmanager --licenses 2>/dev/null || true
 
       - name: Build APK (debug)
         working-directory: ${{ github.workspace }}
