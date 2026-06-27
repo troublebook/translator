@@ -5,7 +5,7 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   build-apk:
@@ -24,41 +24,32 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            build-essential \
-            git \
-            ffmpeg \
-            libsdl2-dev \
-            libsdl2-image-dev \
-            libsdl2-mixer-dev \
-            libsdl2-ttf-dev \
-            libportmidi-dev \
-            libswscale-dev \
-            libavformat-dev \
-            libavcodec-dev \
-            zlib1g-dev \
-            libgstreamer1.0 \
-            gstreamer1.0-plugins-base \
-            gstreamer1.0-plugins-good \
-            openjdk-17-jdk \
-            autoconf \
-            automake \
-            libtool
+          sudo apt-get install -y build-essential git ffmpeg \
+            libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev \
+            libsdl2-ttf-dev libportmidi-dev libswscale-dev \
+            libavformat-dev libavcodec-dev zlib1g-dev \
+            libgstreamer1.0 gstreamer1.0-plugins-base \
+            gstreamer1.0-plugins-good openjdk-17-jdk \
+            autoconf automake libtool
 
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install buildozer cython
 
-      - name: Accept Android SDK licenses
-        run: |
-          mkdir -p $HOME/.android
-          echo "84831b9e0e21c932af7e946501cf5d43bdc38084" > $HOME/.android/repositories.cfg
-          yes | sdkmanager --licenses 2>/dev/null || true
-
       - name: Build APK (debug)
         working-directory: ${{ github.workspace }}
+        env:
+          ANDROID_HOME: $HOME/.buildozer/android/platform/android-sdk
         run: |
+          # Step 1: Let buildozer download the SDK and NDK
+          buildozer android debug 2>&1 | tee /tmp/build.log || true
+          # Step 2: Install build-tools if missing
+          if [ ! -d "$ANDROID_HOME/build-tools" ]; then
+            echo "Installing build-tools with accepted license..."
+            yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0" --sdk_root=$ANDROID_HOME 2>&1 || true
+          fi
+          # Step 3: Run buildozer again
           buildozer android debug
 
       - name: Upload APK artifact
