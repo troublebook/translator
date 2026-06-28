@@ -37,7 +37,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install buildozer cython
           # Pin p4a to a stable release (master pulls Python 3.14 which p4a doesn't support yet)
-          pip install "python-for-android==2025.1.15"
+          pip install "python-for-android==2024.1.21"
 
       - name: Download and setup complete Android SDK
         run: |
