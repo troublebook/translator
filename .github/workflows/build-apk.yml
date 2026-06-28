@@ -49,7 +49,7 @@ jobs:
 
           # Accept license and install everything in one call
           yes | "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" --licenses --sdk_root="$SDK_DIR"
-          "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$SDK_DIR" platform-tools build-tools;33.0.3 platforms;android-33
+          "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$SDK_DIR" "platform-tools" "build-tools;33.0.3" "platforms;android-33"
 
       - name: Download Android NDK
         run: |
