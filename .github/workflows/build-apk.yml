@@ -30,7 +30,7 @@ jobs:
             libavformat-dev libavcodec-dev zlib1g-dev \
             libgstreamer1.0 gstreamer1.0-plugins-base \
             gstreamer1.0-plugins-good openjdk-17-jdk \
-            autoconf automake libtool
+            autoconf automake libtool libltdl-dev
 
       - name: Install Python dependencies
         run: |
