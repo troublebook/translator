@@ -49,7 +49,7 @@ android.api = 33
 android.minapi = 21
 
 # (str) Android NDK version to use
-android.ndk = 26b
+android.ndk = 25c
 
 # (str) Android NDK API to use
 android.ndk_api = 21
