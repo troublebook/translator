@@ -51,6 +51,10 @@ jobs:
           yes | "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" --licenses --sdk_root="$SDK_DIR"
           "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$SDK_DIR" "platform-tools" "build-tools;33.0.3" "platforms;android-33"
 
+          # Create legacy symlink for buildozer (it looks in tools/bin/)
+          mkdir -p "$SDK_DIR/tools/bin"
+          ln -sf "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" "$SDK_DIR/tools/bin/sdkmanager"
+
       - name: Download Android NDK
         run: |
           NDK_DIR="$HOME/.buildozer/android/platform"
