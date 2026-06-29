@@ -38,11 +38,14 @@ jobs:
           pip install buildozer cython
           # Pin p4a to a stable release and patch hostpython3 to Python 3.12 (3.14 not supported yet)
           pip install "python-for-android==2024.1.21"
-          # Patch the hostpython3 recipe to use Python 3.12 instead of 3.14.2
+          # Patch both hostpython3 and python3 recipes to use Python 3.12 (3.14 not supported by p4a)
           P4A_DIR=$(python -c "import pythonforandroid; import os; print(os.path.dirname(pythonforandroid.__file__))")
-          echo "Patched hostpython3 version in $P4A_DIR"
           sed -i 's/version = "3.14.2"/version = "3.12.8"/' "$P4A_DIR/recipes/hostpython3/__init__.py"
-          grep "version =" "$P4A_DIR/recipes/hostpython3/__init__.py" | head -1
+          sed -i 's/version = "3.14.2"/version = "3.12.8"/' "$P4A_DIR/recipes/python3/__init__.py"
+          echo "Patched hostpython3:"
+          grep "version = " "$P4A_DIR/recipes/hostpython3/__init__.py" | head -1
+          echo "Patched python3:"
+          grep "version = " "$P4A_DIR/recipes/python3/__init__.py" | head -1
 
       - name: Download and setup complete Android SDK
         run: |
