@@ -12,8 +12,9 @@ for recipe in ['hostpython3', 'python3']:
         content = f.read()
 
     # Match version = "..." or version = '...'
-    pattern = r"(version\s*=\s*)(['\"])([^'\"]+)\2"
-    replacement = rf"\1\2{target_version}\2"
+    pattern = r'(version\s*=\s*)([\'"])([^\'"]+)\2'
+    # Use explicit concatenation to avoid \2 being misinterpreted as group 23
+    replacement = r'\1\2' + target_version + r'\2'
     new_content = re.sub(pattern, replacement, content, count=1)
 
     with open(filepath, 'w') as f:
