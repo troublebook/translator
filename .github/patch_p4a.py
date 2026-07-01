@@ -1,4 +1,4 @@
-"""Patch p4a hostpython3/python3 recipes to use a specific Python version."""
+"""Patch p4a hostpython3/python3 recipes to use Python 3.12.8."""
 import re
 import sys
 import os
@@ -11,20 +11,38 @@ for recipe in ['hostpython3', 'python3']:
     with open(filepath) as f:
         content = f.read()
 
-    # Replace version = "..." or version = '...' with version = "3.12.8"
-    # Pattern includes the closing quote so replacer can reconstruct properly
-    def replacer(m):
-        q = m.group(2)
-        return m.group(1) + q + target_version + q
+    # Replace any line like: version = "3.14.2" or version = '3.14.2'
+    # Use a simple string replacement instead of regex to avoid edge cases
+    old_line = None
+    for line in content.split('\n'):
+        stripped = line.strip()
+        if stripped.startswith('version = ') and ('3.14' in stripped or '3.12' in stripped):
+            # Determine the quote style
+            for q in ['"', "'"]:
+                if q in stripped:
+                    old_line = stripped
+                    break
+            break
 
-    new_content = re.sub(r"(version\s*=\s*)(['\"])([^'\"]+)(['\"])", replacer, content, count=1)
+    if old_line is None:
+        print(f"WARNING: No version line found in {recipe}")
+        continue
+
+    # Replace preserving indentation
+    indent = len(old_line) - len(old_line.lstrip())
+    quote = '"' if '"' in old_line else "'"
+    new_line = ' ' * indent + f'version = {quote}{target_version}{quote}'
+    content = content.replace(old_line, new_line, 1)
 
     with open(filepath, 'w') as f:
-        f.write(new_content)
+        f.write(content)
 
     # Verify
     with open(filepath) as f:
         for line in f:
-            if 'version' in line and target_version in line:
+            if target_version in line and 'version' in line:
                 print(f'Patched {recipe} -> {target_version}')
                 break
+    else:
+        print(f'ERROR: {recipe} was NOT patched correctly')
+        sys.exit(1)
