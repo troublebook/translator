@@ -11,16 +11,13 @@ for recipe in ['hostpython3', 'python3']:
     with open(filepath) as f:
         content = f.read()
 
-    # Match version = "..." or version = '...'
-    # Use a simple pattern; we capture the quote char via the replacer function
-    pattern = r'(version\s*=\s*)([\'"])([^\'"]+)'
-    quote = None
+    # Replace version = "..." or version = '...' with version = "3.12.8"
+    # Use a function-based replacement to avoid regex backreference issues
     def replacer(m):
-        nonlocal quote
-        quote = m.group(2)
-        return m.group(1) + quote + target_version + quote
+        q = m.group(2)
+        return m.group(1) + q + target_version + q
 
-    new_content = re.sub(pattern, replacer, content, count=1)
+    new_content = re.sub(r'(version\s*=\s*)([\'"])([^\'"]+)', replacer, content, count=1)
 
     with open(filepath, 'w') as f:
         f.write(new_content)
