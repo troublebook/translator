@@ -39,7 +39,9 @@ jobs:
           # Pin p4a to a stable release and patch hostpython3 to Python 3.12 (3.14 not supported yet)
           pip install "python-for-android==2024.1.21"
           # Patch both hostpython3 and python3 recipes to Python 3.12.8
+          # Delete .pyc cache first to ensure patch takes effect
           P4A_DIR=$(python -c "import pythonforandroid; import os; print(os.path.dirname(pythonforandroid.__file__))")
+          find "$P4A_DIR" -name "*.pyc" -delete
           python ${{ github.workspace }}/.github/patch_p4a.py "$P4A_DIR" "3.12.8"
 
       - name: Download and setup complete Android SDK
