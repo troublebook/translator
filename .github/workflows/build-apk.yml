@@ -43,6 +43,11 @@ jobs:
           P4A_DIR=$(python -c "import pythonforandroid; import os; print(os.path.dirname(pythonforandroid.__file__))")
           find "$P4A_DIR" -name "*.pyc" -delete
           python ${{ github.workspace }}/.github/patch_p4a.py "$P4A_DIR" "3.12.8"
+          # Verify the patch actually took effect
+          echo "Verifying hostpython3 version:"
+          grep "version = " "$P4A_DIR/recipes/hostpython3/__init__.py" | head -1
+          echo "Verifying python3 version:"
+          grep "version = " "$P4A_DIR/recipes/python3/__init__.py" | head -1
 
       - name: Download and setup complete Android SDK
         run: |
