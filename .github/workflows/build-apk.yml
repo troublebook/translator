@@ -43,6 +43,10 @@ jobs:
           P4A_DIR=$(python -c "import pythonforandroid; import os; print(os.path.dirname(pythonforandroid.__file__))")
           find "$P4A_DIR" -name "*.pyc" -delete
           python ${{ github.workspace }}/.github/patch_p4a.py "$P4A_DIR" "3.12.8"
+          # Also patch the p4a clone that buildozer will use (it clones to .buildozer/android/platform/python-for-android)
+          P4A_BUILD_DIR="$HOME/.buildozer/android/platform/python-for-android/pythonforandroid/recipes"
+          mkdir -p "$P4A_BUILD_DIR"
+          python ${{ github.workspace }}/.github/patch_p4a.py "$(dirname "$P4A_BUILD_DIR")" "3.12.8"
           # Verify the patch actually took effect
           echo "Verifying hostpython3 version:"
           grep "version = " "$P4A_DIR/recipes/hostpython3/__init__.py" | head -1
