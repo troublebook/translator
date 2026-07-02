@@ -51,7 +51,10 @@ jobs:
           # Symlink the patched p4a to the path buildozer expects, so it won't clone master
           P4A_BUILD_DIR="$HOME/.buildozer/android/platform/python-for-android"
           mkdir -p "$(dirname "$P4A_BUILD_DIR")"
+          rm -rf "$P4A_BUILD_DIR"
           ln -sf "$P4A_DIR" "$P4A_BUILD_DIR"
+          # Verify symlink
+          ls -la "$P4A_BUILD_DIR"
 
       - name: Download and setup complete Android SDK
         run: |
