@@ -48,13 +48,11 @@ jobs:
           grep "version = " "$P4A_DIR/recipes/hostpython3/__init__.py" | head -1
           echo "Verifying python3 version:"
           grep "version = " "$P4A_DIR/recipes/python3/__init__.py" | head -1
-          # Symlink the patched p4a to the path buildozer expects, so it won't clone master
+          # Pre-create the p4a clone directory and patch it, so buildozer won't clone master
           P4A_BUILD_DIR="$HOME/.buildozer/android/platform/python-for-android"
-          mkdir -p "$(dirname "$P4A_BUILD_DIR")"
-          rm -rf "$P4A_BUILD_DIR"
-          ln -sf "$P4A_DIR" "$P4A_BUILD_DIR"
-          # Verify symlink
-          ls -la "$P4A_BUILD_DIR"
+          mkdir -p "$P4A_BUILD_DIR"
+          git clone --depth 1 -b 2024.1.21 https://github.com/kivy/python-for-android.git "$P4A_BUILD_DIR"
+          python ${{ github.workspace }}/.github/patch_p4a.py "$P4A_BUILD_DIR/pythonforandroid" "3.12.8"
 
       - name: Download and setup complete Android SDK
         run: |
