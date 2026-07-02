@@ -38,11 +38,13 @@ for recipe in ['hostpython3', 'python3']:
         f.write(content)
 
     # Verify
+    patched = False
     with open(filepath) as f:
         for line in f:
             if target_version in line and 'version' in line:
                 print(f'Patched {recipe} -> {target_version}')
+                patched = True
                 break
-    else:
+    if not patched:
         print(f'ERROR: {recipe} was NOT patched correctly')
         sys.exit(1)
